@@ -1,4 +1,5 @@
 import 'package:expense_manager/models/transaction.dart';
+import 'package:expense_manager/widgets/chart_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -22,7 +23,16 @@ class Chart extends StatelessWidget {
         }
       }
 
-      return {'day': DateFormat.E().format(weekDay).substring(0,1), 'amount': totalSum};
+      return {
+        'day': DateFormat.E().format(weekDay).substring(0, 1),
+        'amount': totalSum
+      };
+    }).reversed.toList();
+  }
+
+  double get totalSpending {
+    return groupTransactionValues.fold(0.0, (sum, item) {
+      return sum + (item['amount'] as double);
     });
   }
 
@@ -30,11 +40,20 @@ class Chart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
-      margin: EdgeInsets.all(20),
-      child: Row(
-        children: groupTransactionValues.map((data) {
-          return Text('${data['day']}: ${data['amount']}');
-        }).toList(),
+      margin: const EdgeInsets.all(20),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: groupTransactionValues.map((data) {
+            return Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: ChartBar(data['day'] as String, data['amount'] as double,
+                  totalSpending==0.0 ? 0.0 :(data['amount'] as double) / totalSpending),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

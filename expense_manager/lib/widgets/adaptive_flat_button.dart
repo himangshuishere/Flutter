@@ -16,9 +16,9 @@ class AdaptiveFlatButton extends StatelessWidget {
               text,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            onPressed: () => handler)
+            onPressed: () => handler())
         : FlatButton(
-            onPressed: () => handler,
+            onPressed: () => handler(),
             child: Text(
               'Choose Date',
               style: TextStyle(fontWeight: FontWeight.bold),

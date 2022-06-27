@@ -29,13 +29,17 @@ class Orders with ChangeNotifier {
         'https://shop-app-flutter-a1231-default-rtdb.firebaseio.com/orders.json';
     final response = await http.get(Uri.parse(url));
     List<orderItem> loadedOrders = [];
-    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    var extractedData = json.decode(response.body) as Map<String, dynamic>;
+    if (extractedData == null) {
+      return;
+    }
+
     extractedData.forEach((orderId, orderData) {
       loadedOrders.add(orderItem(
         id: orderId,
         amount: orderData['amount'],
         dateTime: DateTime.parse(orderData['dateTime']),
-        products: (orderData['products'] as List<dynamic>)
+        products: (orderData['product'] as List<dynamic>)
             .map((item) => cartItem(
                 id: item['id'],
                 price: item['price'],
@@ -44,7 +48,7 @@ class Orders with ChangeNotifier {
             .toList(),
       ));
     });
-    _orders = loadedOrders;
+    _orders = loadedOrders.reversed.toList();
     notifyListeners();
   }
 

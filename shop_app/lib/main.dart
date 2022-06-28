@@ -28,40 +28,61 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Auth(),
         ),
-        ChangeNotifierProvider.value(value: Products()),
-        ChangeNotifierProvider.value(value: Cart()),
-        ChangeNotifierProvider.value(value: Orders()),
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.deepOrange,
-          fontFamily: 'Lato',
-          textTheme: ThemeData.light().textTheme.copyWith(
-                bodyText1: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                ),
-                bodyText2: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                ),
-                headline6: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'Lato',
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
+        ChangeNotifierProxyProvider<Auth, Products>(
+          create: (_) => Products('', []),
+          update: (_, auth, previousProducts) => Products(
+            auth.token as String,
+            previousProducts == null ? [] : previousProducts.items,
+          ),
         ),
-        home: AuthScreen(),
-        routes: {
-          ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
-          CartScreen.routeName: (context) => CartScreen(),
-          OrdersScreen.routeName: (context) => OrdersScreen(),
-          UserProductScreen.routeName: (context) => UserProductScreen(),
-          EditProductScreen.routeName: (context) => EditProductScreen(),
-        },
-        debugShowCheckedModeBanner: false,
+        ChangeNotifierProvider.value(
+          value: Cart(),
+        ),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          create: (_) => Orders(
+            '',
+            [],
+          ),
+          update: (_, auth, previousOrders) => Orders(
+            auth.token as String,
+            previousOrders == null ? [] : previousOrders.orders,
+          ),
+        ),
+      ],
+      child: Consumer<Auth>(
+        builder: (ctx, authData, _) => MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.purple,
+            accentColor: Colors.deepOrange,
+            fontFamily: 'Lato',
+            textTheme: ThemeData.light().textTheme.copyWith(
+                  bodyText1: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  bodyText2: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  headline6: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+          ),
+          home: authData.isAuth ? ProductOverviewScreen() : AuthScreen(),
+          routes: {
+            ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
+            ProductOverviewScreen.routeName: (context) =>
+                ProductOverviewScreen(),
+            CartScreen.routeName: (context) => CartScreen(),
+            OrdersScreen.routeName: (context) => OrdersScreen(),
+            UserProductScreen.routeName: (context) => UserProductScreen(),
+            EditProductScreen.routeName: (context) => EditProductScreen(),
+          },
+          debugShowCheckedModeBanner: false,
+        ),
       ),
     );
   }

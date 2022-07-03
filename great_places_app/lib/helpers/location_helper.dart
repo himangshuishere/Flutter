@@ -8,7 +8,7 @@ const BING_API_KEY =
 class LocationHelper {
   static String generateLocationPreviewImage(
       {required double latitude, required double longitude}) {
-    return 'https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/$latitude,$longitude/14?mapSize=500,500&pp=$latitude,$longitude;66&mapLayer=Basemap,Buildings&key=$BING_API_KEY';
+    return 'https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/$latitude,$longitude/16?mapSize=500,500&pp=$latitude,$longitude;66&mapLayer=Basemap,Buildings&key=$BING_API_KEY';
   }
 
   static Future<String> getPlaceAddress(double lat, double lng) async {

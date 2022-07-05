@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/colors.dart';
+import 'package:notes_app/models/notes.dart';
 import 'package:notes_app/providers/providers_notes.dart';
 import 'package:provider/provider.dart';
 
@@ -14,22 +15,48 @@ class _NoteInputState extends State<NoteInput> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   final _contentFocusNode = FocusNode();
+  var _editedNote =
+      Notes(id: '', title: '', notes: '', modified_at: DateTime.now());
+  var _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final dynamic noteId = ModalRoute.of(context)!.settings.arguments;
+      if (noteId['id'] != '') {
+        _editedNote = Provider.of<NotesListProvider>(context, listen: false)
+            .findById(noteId['id']);
+        _titleController.text = _editedNote.title;
+        _contentController.text =
+            _editedNote.notes == null ? '' : _editedNote.notes as String;
+      }
+    }
+    super.didChangeDependencies();
+  }
 
   void _save() {
-    if (_titleController.text.isNotEmpty ||
-        _contentController.text.isNotEmpty) {
+    if ((_titleController.text.isNotEmpty ||
+            _contentController.text.isNotEmpty) &&
+        _editedNote.id == '') {
       Future.delayed(Duration.zero).then((_) {
-        Provider.of<NotesListProvider>(context, listen: false)
-            .addNotes(_titleController.text, _contentController.text);
+        Provider.of<NotesListProvider>(context, listen: false).addNotes(
+            _titleController.text.isEmpty ? 'Title' : _titleController.text,
+            _contentController.text);
       });
+    } else {
+      if (_editedNote.id != '') {
+        Provider.of<NotesListProvider>(context, listen: false).updateNotes(
+            _editedNote.id, _titleController.text, _contentController.text);
+      }
     }
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    final String data = ModalRoute.of(context)!.settings.arguments as String;
-    final String theme = data;
+    final dynamic data = ModalRoute.of(context)!.settings.arguments;
+    final theme = data['theme'];
+    final id = data['id'];
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,

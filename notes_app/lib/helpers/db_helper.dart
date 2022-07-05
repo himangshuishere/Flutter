@@ -24,4 +24,10 @@ class DBHelper {
     final db = await DBHelper.database();
     return db.query('user_notes');
   }
+
+  static Future<void> updateData(
+      dynamic oldKey, Map<String, dynamic> data) async {
+    final db = await DBHelper.database();
+    db.update('user_notes', data, where: '''id = ${data['id']}''');
+  }
 }

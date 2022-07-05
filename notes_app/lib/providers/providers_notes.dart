@@ -26,6 +26,23 @@ class NotesListProvider with ChangeNotifier {
     });
   }
 
+  void updateNotes(String id, String noteTitle, String noteContent) {
+    final updatedNote = Notes(
+      id: id,
+      title: noteTitle,
+      notes: noteContent,
+      modified_at: DateTime.now(),
+    );
+    final noteIndx = _list.indexWhere((note) => note.id.toString() == id);
+    _list[noteIndx] = updatedNote;
+    notifyListeners();
+    DBHelper.updateData(id, {
+      'title': updatedNote.title,
+      'notes': updatedNote.notes,
+      'modified_at': updatedNote.modified_at.toIso8601String(),
+    });
+  }
+
   Future<void> fetchAndSetNotes() async {
     final notesData = await DBHelper.getData();
     _list = notesData
@@ -37,5 +54,9 @@ class NotesListProvider with ChangeNotifier {
             ))
         .toList();
     notifyListeners();
+  }
+
+  Notes findById(String id) {
+    return _list.firstWhere((note) => note.id == id);
   }
 }

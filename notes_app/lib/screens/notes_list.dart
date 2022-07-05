@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:notes_app/colors.dart';
 import 'package:notes_app/providers/providers_notes.dart';
 import 'package:notes_app/screens/note_input.dart';
 import 'package:notes_app/widgets/note_item.dart';
@@ -20,9 +17,9 @@ class _NotesListState extends State<NotesList> {
   var toggleLightDark = 'Light';
   var icon_data = Icons.dark_mode;
 
-  void _pageRouter() {
-    Navigator.of(context)
-        .pushNamed(NoteInput.routeName, arguments: toggleLightDark);
+  void _pageRouter([String? id = '']) {
+    Navigator.of(context).pushNamed(NoteInput.routeName,
+        arguments: {'theme': toggleLightDark, 'id': id});
   }
 
   void _toggleTheme() {
@@ -107,10 +104,15 @@ class _NotesListState extends State<NotesList> {
                                             maxCrossAxisExtent: 200.0),
                                     padding: const EdgeInsets.all(10),
                                     itemCount: noteData.list.length,
-                                    itemBuilder: (ctx, i) => NoteItem(
-                                        noteData.list[i].title,
-                                        noteData.list[i].notes,
-                                        toggleLightDark)),
+                                    itemBuilder: (ctx, i) => InkWell(
+                                          onTap: () {
+                                            _pageRouter(noteData.list[i].id);
+                                          },
+                                          child: NoteItem(
+                                              noteData.list[i].title,
+                                              noteData.list[i].notes,
+                                              toggleLightDark),
+                                        )),
                               ),
                             ],
                           ),

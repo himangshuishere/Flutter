@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stylish/constants.dart';
 import 'package:stylish/screens/home/home_screen.dart';
 
 void main() {
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'The Flutter Way',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: bgColor,
         fontFamily: "Gordita",
         textTheme: const TextTheme(
           bodyText2: TextStyle(color: Colors.black54),
